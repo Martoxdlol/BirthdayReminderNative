@@ -5,6 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,11 +39,15 @@ import net.tomascichero.birthdayremainder.ui.settings.SettingsScreen
 import net.tomascichero.birthdayremainder.ui.theme.BirthdayReminderTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.ui.unit.dp
 
 
 class MainActivity : ComponentActivity() {
@@ -52,7 +62,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AppScreen() {
     var searchQuery by remember { mutableStateOf("") }
@@ -64,13 +74,7 @@ fun AppScreen() {
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    val filteredBirthdays = if (searchQuery.isEmpty()) {
-        sampleBirthdays
-    } else {
-        sampleBirthdays.filter {
-            it.name.contains(searchQuery, ignoreCase = true)
-        }
-    }
+
 
     Scaffold(
         modifier = Modifier
@@ -103,7 +107,7 @@ fun AppScreen() {
             )
         },
         bottomBar = {
-            NavigationBar {
+             NavigationBar {
                 navItems.forEachIndexed { index, item ->
                     NavigationBarItem(
                         icon = { Icon(icons[index], contentDescription = item) },
@@ -115,14 +119,44 @@ fun AppScreen() {
             }
         }
     ) { innerPadding ->
+        AppMainContainer(
+            innerPaddingValues = innerPadding,
+            selectedItem = selectedItem,
+            filter = searchQuery
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun AppMainContainer(innerPaddingValues: PaddingValues, selectedItem: Int, filter: String) {
+
+    val imePaddingBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+
+    val filteredBirthdays = if (filter.isEmpty()) {
+        sampleBirthdays
+    } else {
+        sampleBirthdays.filter {
+            it.name.contains(filter, ignoreCase = true)
+        }
+    }
+
+    var paddingBottom = imePaddingBottom
+    if(innerPaddingValues.calculateBottomPadding() > paddingBottom) {
+        paddingBottom = innerPaddingValues.calculateBottomPadding()
+    }
+
+    Box(modifier = Modifier.padding(
+        top = innerPaddingValues.calculateTopPadding(),
+        bottom = paddingBottom
+    )) {
         when (selectedItem) {
             0 -> BirthdayListScreen(
                 birthdays = filteredBirthdays,
-                modifier = Modifier.padding(innerPadding)
             )
 
-            1 -> AddScreen(modifier = Modifier.padding(innerPadding))
-            2 -> SettingsScreen(modifier = Modifier.padding(innerPadding))
+            1 -> AddScreen()
+            2 -> SettingsScreen()
         }
     }
 }
