@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.data.sampleBirthdays
 import net.tomascichero.birthdayremainder.ui.add.AddScreen
 import net.tomascichero.birthdayremainder.ui.home.BirthdayListScreen

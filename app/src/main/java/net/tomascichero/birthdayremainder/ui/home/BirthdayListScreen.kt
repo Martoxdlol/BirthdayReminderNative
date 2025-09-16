@@ -2,6 +2,7 @@ package net.tomascichero.birthdayremainder.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,10 +22,11 @@ import net.tomascichero.birthdayremainder.data.Birthday
 @Composable
 fun BirthdayListScreen(
     birthdays: List<Birthday>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize().padding(bottom = 8.dp),
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(items = birthdays, key = { it.id }) { birthday ->
