@@ -1,19 +1,33 @@
 package net.tomascichero.birthdayremainder.ui.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+
+private fun formatTime(time: String): String {
+    val parts = time.split(":")
+    if (parts.size < 2) return time
+    val hours = parts[0].toIntOrNull() ?: return time
+    val minutes = parts[1].toIntOrNull() ?: return time
+    return "%02d:%02d".format(hours, minutes)
+}
 
 @Composable
 fun NotificationTimePickerDialog(
@@ -28,27 +42,25 @@ fun NotificationTimePickerDialog(
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 options.forEach { time ->
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = time,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        leadingContent = {
-                            RadioButton(
-                                selected = time == selectedTime,
-                                onClick = null
-                            )
-                        },
+                    val isSelected = formatTime(time) == formatTime(selectedTime ?: "")
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .selectable(
-                                selected = time == selectedTime,
-                                role = Role.RadioButton,
-                                onClick = { onTimeSelected(time) }
-                            )
-                    )
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onTimeSelected(time) }
+                            .padding(vertical = 8.dp, horizontal = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = isSelected,
+                            onClick = null
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = formatTime(time),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
         },

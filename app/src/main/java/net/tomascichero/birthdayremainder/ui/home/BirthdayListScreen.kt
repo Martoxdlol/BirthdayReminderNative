@@ -70,6 +70,11 @@ fun BirthdayListScreen(
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        if (filter.isEmpty()) {
+            item(key = "notification_prompt") {
+                NotificationPromptCard(onDismiss = {})
+            }
+        }
         items(items = filtered, key = { it.id }) { birthday ->
             BirthdayListItem(
                 birthday = birthday,
