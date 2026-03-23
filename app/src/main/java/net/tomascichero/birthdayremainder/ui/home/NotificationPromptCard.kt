@@ -1,6 +1,7 @@
 package net.tomascichero.birthdayremainder.ui.home
 
 import android.Manifest
+import android.content.Context
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,9 +32,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.notifications.NotificationsManager
+
+private const val PREFS_NAME = "notification_prompt"
+private const val KEY_DISMISSED_AT = "dismissed_at"
+private const val DISMISS_DURATION_MS = 14L * 24 * 60 * 60 * 1000 // 14 days
+
+private fun isDismissed(context: Context): Boolean {
+    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    val dismissedAt = prefs.getLong(KEY_DISMISSED_AT, 0)
+    if (dismissedAt == 0L) return false
+    return System.currentTimeMillis() - dismissedAt < DISMISS_DURATION_MS
+}
+
+private fun saveDismissed(context: Context) {
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        .edit()
+        .putLong(KEY_DISMISSED_AT, System.currentTimeMillis())
+        .apply()
+}
 
 @Composable
 fun NotificationPromptCard(
@@ -56,6 +77,10 @@ fun NotificationPromptCard(
     }
 
     LaunchedEffect(Unit) {
+        if (isDismissed(context)) {
+            visible = false
+            return@LaunchedEffect
+        }
         val enabled = NotificationsManager.isEnabled(context)
         visible = !enabled
     }
@@ -80,13 +105,13 @@ fun NotificationPromptCard(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Enable notifications",
+                    text = stringResource(R.string.enable_notifications),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
             Text(
-                text = "Get reminders so you never miss a birthday",
+                text = stringResource(R.string.enable_notifications_description),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                 modifier = Modifier.padding(top = 4.dp)
@@ -100,6 +125,7 @@ fun NotificationPromptCard(
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = {
+                        saveDismissed(context)
                         visible = false
                         onDismiss()
                     },
@@ -107,7 +133,7 @@ fun NotificationPromptCard(
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
-                    Text("Later")
+                    Text(stringResource(R.string.later))
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
@@ -126,7 +152,7 @@ fun NotificationPromptCard(
                         contentColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
-                    Text("Enable")
+                    Text(stringResource(R.string.enable))
                 }
             }
         }

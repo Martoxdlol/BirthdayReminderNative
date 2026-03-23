@@ -22,8 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.data.BirthdayRepository
 import java.time.format.DateTimeFormatter
@@ -57,7 +59,7 @@ fun BirthdayListScreen(
     if (filtered.isEmpty()) {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                text = if (filter.isEmpty()) "No birthdays yet" else "No results",
+                text = if (filter.isEmpty()) stringResource(R.string.no_birthdays_yet) else stringResource(R.string.no_results),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -105,9 +107,9 @@ fun BirthdayListItem(
     }
 
     val daysText = when (daysUntil) {
-        0L -> "Today!"
-        1L -> "Tomorrow"
-        else -> "$daysUntil days"
+        0L -> stringResource(R.string.today)
+        1L -> stringResource(R.string.tomorrow)
+        else -> stringResource(R.string.days_format, daysUntil.toInt())
     }
 
     Card(
@@ -134,7 +136,8 @@ fun BirthdayListItem(
                     text = buildString {
                         append(birthday.birth.format(dateFormatter))
                         if (nextAge != null) {
-                            append(" · Turns $nextAge")
+                            append(" · ")
+                            append(stringResource(R.string.turns_format, nextAge))
                         }
                     },
                     style = MaterialTheme.typography.bodySmall,

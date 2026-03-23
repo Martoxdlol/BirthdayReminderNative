@@ -29,6 +29,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -37,6 +39,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,12 +50,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.notifications.NotificationsManager
+import net.tomascichero.birthdayremainder.preferences.AppPreferences
+import net.tomascichero.birthdayremainder.preferences.ThemeMode
 
 private val outerCorner = 16.dp
 private val innerCorner = 4.dp
@@ -78,6 +85,11 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     var selectedTime by remember { mutableStateOf<String?>(null) }
     var timeOptions by remember { mutableStateOf<List<String>>(emptyList()) }
     var showTimePicker by remember { mutableStateOf(false) }
+    var showThemePicker by remember { mutableStateOf(false) }
+    var showLanguagePicker by remember { mutableStateOf(false) }
+
+    val currentTheme by AppPreferences.themeMode.collectAsState()
+    val currentLanguage by AppPreferences.language.collectAsState()
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -99,6 +111,14 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         timeOptions = NotificationsManager.getTimeOptions()
     }
 
+    // Pre-compute email strings at composable level (stringResource can't be called inside lambdas)
+    val deleteDataSubject = stringResource(R.string.delete_data_subject)
+    val helpSubject = stringResource(R.string.help_subject)
+    val helpBody = stringResource(R.string.help_body)
+    val anonymousLabel = stringResource(R.string.anonymous)
+    val loadingLabel = stringResource(R.string.loading)
+    val shareLabel = stringResource(R.string.share)
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -106,33 +126,36 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         // Account
-        SectionHeader("Account")
+        SectionHeader(stringResource(R.string.account))
 
         SettingsItem(
             icon = Icons.Default.AccountCircle,
-            title = user?.displayName ?: user?.email ?: "Anonymous",
+            title = user?.displayName ?: user?.email ?: anonymousLabel,
             subtitle = user?.email,
             position = GroupPosition.Top,
             onClick = {}
         )
         SettingsItem(
             icon = Icons.AutoMirrored.Filled.ExitToApp,
-            title = "Sign out",
+            title = stringResource(R.string.sign_out),
             position = GroupPosition.Middle,
             onClick = { FirebaseAuth.getInstance().signOut() }
         )
+
+        val email = user?.email ?: "<please put here your email>"
+        val uidSuffix = user?.uid?.takeLast(6) ?: ""
+        val deleteDataBody = stringResource(R.string.delete_data_body, email, uidSuffix)
+
         SettingsItem(
             icon = Icons.Default.Delete,
-            title = "Delete all my data",
+            title = stringResource(R.string.delete_all_my_data),
             position = GroupPosition.Bottom,
             onClick = {
-                val email = user?.email ?: "<please put here your email>"
-                val uidSuffix = user?.uid?.takeLast(6) ?: ""
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse(
                         "mailto:martoxdlol@gmail.com" +
-                                "?subject=${Uri.encode("Delete all my data")}" +
-                                "&body=${Uri.encode("Hi, I want you to delete my account and all my data from the Birthday Reminder app. My email registered in the app is: $email.\n\n$uidSuffix.\n")}"
+                                "?subject=${Uri.encode(deleteDataSubject)}" +
+                                "&body=${Uri.encode(deleteDataBody)}"
                     )
                 }
                 context.startActivity(intent)
@@ -142,7 +165,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Notifications
-        SectionHeader("Notifications")
+        SectionHeader(stringResource(R.string.notifications))
 
         NotificationToggleItem(
             enabled = notificationsEnabled,
@@ -164,10 +187,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             }
         )
 
-        val displayTime = selectedTime?.split(":")?.take(2)?.joinToString(":") ?: "Loading..."
+        val displayTime = selectedTime?.split(":")?.take(2)?.joinToString(":") ?: loadingLabel
         SettingsItem(
             icon = Icons.Default.Notifications,
-            title = "Notification time",
+            title = stringResource(R.string.notification_time),
             subtitle = displayTime,
             position = GroupPosition.Bottom,
             enabled = notificationsEnabled == true,
@@ -176,24 +199,48 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Preferences
+        SectionHeader(stringResource(R.string.preferences))
+
+        SettingsItem(
+            icon = Icons.Default.Palette,
+            title = stringResource(R.string.theme),
+            subtitle = when (currentTheme) {
+                ThemeMode.System -> stringResource(R.string.theme_system)
+                ThemeMode.Light -> stringResource(R.string.theme_light)
+                ThemeMode.Dark -> stringResource(R.string.theme_dark)
+            },
+            position = GroupPosition.Top,
+            onClick = { showThemePicker = true }
+        )
+        SettingsItem(
+            icon = Icons.Default.Translate,
+            title = stringResource(R.string.language),
+            subtitle = AppPreferences.getLanguageLabel(currentLanguage),
+            position = GroupPosition.Bottom,
+            onClick = { showLanguagePicker = true }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // App
-        SectionHeader("App")
+        SectionHeader(stringResource(R.string.app_section))
 
         SettingsItem(
             icon = Icons.Default.Share,
-            title = "Share",
+            title = stringResource(R.string.share),
             position = GroupPosition.Top,
             onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, "https://birthday-remainder-app.web.app/")
                 }
-                context.startActivity(Intent.createChooser(intent, "Share"))
+                context.startActivity(Intent.createChooser(intent, shareLabel))
             }
         )
         SettingsItem(
             icon = Icons.Default.Lock,
-            title = "Privacy Policy",
+            title = stringResource(R.string.privacy_policy),
             position = GroupPosition.Middle,
             onClick = {
                 context.startActivity(
@@ -203,7 +250,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         )
         SettingsItem(
             icon = Icons.Default.Info,
-            title = "Terms of Use",
+            title = stringResource(R.string.terms_of_use),
             position = GroupPosition.Middle,
             onClick = {
                 context.startActivity(
@@ -213,14 +260,14 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         )
         SettingsItem(
             icon = Icons.Default.Email,
-            title = "Help & Contact",
+            title = stringResource(R.string.help_and_contact),
             position = GroupPosition.Bottom,
             onClick = {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse(
                         "mailto:martoxdlol@gmail.com" +
-                                "?subject=${Uri.encode("Birthday Reminder Help")}" +
-                                "&body=${Uri.encode("Hi, I need help with the Birthday Reminder app. \n")}"
+                                "?subject=${Uri.encode(helpSubject)}" +
+                                "&body=${Uri.encode(helpBody)}"
                     )
                 }
                 context.startActivity(intent)
@@ -240,6 +287,38 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                 scope.launch { NotificationsManager.setTime(time) }
             },
             onDismiss = { showTimePicker = false }
+        )
+    }
+
+    if (showThemePicker) {
+        OptionPickerDialog(
+            title = stringResource(R.string.theme),
+            options = listOf(
+                stringResource(R.string.theme_system),
+                stringResource(R.string.theme_light),
+                stringResource(R.string.theme_dark)
+            ),
+            selectedIndex = currentTheme.ordinal,
+            onSelected = { index ->
+                val mode = ThemeMode.entries[index]
+                AppPreferences.setTheme(context, mode)
+                showThemePicker = false
+            },
+            onDismiss = { showThemePicker = false }
+        )
+    }
+
+    if (showLanguagePicker) {
+        OptionPickerDialog(
+            title = stringResource(R.string.language),
+            options = AppPreferences.availableLanguages.map { it.label },
+            selectedIndex = AppPreferences.availableLanguages.indexOfFirst { it.code == currentLanguage }.coerceAtLeast(0),
+            onSelected = { index ->
+                val lang = AppPreferences.availableLanguages[index]
+                AppPreferences.setLanguage(context, lang.code)
+                showLanguagePicker = false
+            },
+            onDismiss = { showLanguagePicker = false }
         )
     }
 }
@@ -319,7 +398,7 @@ private fun NotificationToggleItem(
     onToggle: (Boolean) -> Unit
 ) {
     Card(
-        onClick = { if (enabled != null) onToggle(enabled != true) },
+        onClick = { if (enabled != null) onToggle(enabled) },
         enabled = enabled != null,
         modifier = Modifier.fillMaxWidth(),
         shape = groupShape(position),
@@ -342,9 +421,9 @@ private fun NotificationToggleItem(
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "Notifications", style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(R.string.notifications), style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    text = if (enabled == true) "Enabled" else "Disabled",
+                    text = if (enabled == true) stringResource(R.string.enabled) else stringResource(R.string.disabled),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

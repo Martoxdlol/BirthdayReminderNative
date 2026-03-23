@@ -1,9 +1,10 @@
 package net.tomascichero.birthdayremainder
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -30,19 +32,25 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import net.tomascichero.birthdayremainder.data.Birthday
+import net.tomascichero.birthdayremainder.preferences.AppPreferences
+import net.tomascichero.birthdayremainder.preferences.ThemeMode
 import net.tomascichero.birthdayremainder.ui.add.AddScreen
 import net.tomascichero.birthdayremainder.ui.home.BirthdayDetailSheet
 import net.tomascichero.birthdayremainder.ui.home.BirthdayListScreen
@@ -51,15 +59,29 @@ import net.tomascichero.birthdayremainder.ui.settings.SettingsScreen
 import net.tomascichero.birthdayremainder.ui.theme.BirthdayReminderTheme
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppPreferences.init(this)
         enableEdgeToEdge()
         setContent {
-            BirthdayReminderTheme {
-                AuthWrapper()
-            }
+            AppRoot()
         }
+    }
+}
+
+@Composable
+fun AppRoot() {
+    val themeMode by AppPreferences.themeMode.collectAsState()
+
+    val darkTheme = when (themeMode) {
+        ThemeMode.Light -> false
+        ThemeMode.Dark -> true
+        ThemeMode.System -> isSystemInDarkTheme()
+    }
+
+    BirthdayReminderTheme(darkTheme = darkTheme) {
+        AuthWrapper()
     }
 }
 
@@ -89,15 +111,17 @@ fun AuthWrapper() {
 @Composable
 fun AppScreen() {
     var searchQuery by remember { mutableStateOf("") }
-    var selectedItem by remember { mutableIntStateOf(0) }
-    val navItems = listOf("Home", "Add", "Settings")
+    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
+    val navItems = listOf(
+        stringResource(R.string.nav_home),
+        stringResource(R.string.nav_add),
+        stringResource(R.string.nav_settings)
+    )
     val icons =
         listOf(Icons.Default.Home, Icons.Default.Add, Icons.Default.Settings)
 
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
-
 
     Scaffold(
         modifier = Modifier
@@ -110,7 +134,7 @@ fun AppScreen() {
                         0 -> TextField(
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
-                            placeholder = { Text("Search birthdays...") },
+                            placeholder = { Text(stringResource(R.string.search_birthdays)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             colors = TextFieldDefaults.colors(
@@ -122,8 +146,8 @@ fun AppScreen() {
                             )
                         )
 
-                        1 -> Text("Add Birthday")
-                        2 -> Text("Settings")
+                        1 -> Text(stringResource(R.string.add_birthday))
+                        2 -> Text(stringResource(R.string.nav_settings))
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -167,10 +191,14 @@ fun AppMainContainer(innerPaddingValues: PaddingValues, selectedItem: Int, filte
         top = innerPaddingValues.calculateTopPadding(),
         bottom = paddingBottom
     )) {
-        when (selectedItem) {
-            0 -> BirthdayListScreen(filter = filter)
-            1 -> AddScreen(onBirthdaySaved = { sheetBirthday = it })
-            2 -> SettingsScreen()
+        Box(modifier = if (selectedItem == 0) Modifier else Modifier.size(0.dp)) {
+            BirthdayListScreen(filter = filter)
+        }
+        if (selectedItem == 1) {
+            AddScreen(onBirthdaySaved = { sheetBirthday = it })
+        }
+        if (selectedItem == 2) {
+            SettingsScreen()
         }
     }
 

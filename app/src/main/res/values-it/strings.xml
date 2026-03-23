@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">Promemoria Compleanni</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_add">Aggiungi</string>
+    <string name="nav_settings">Impostazioni</string>
+
+    <string name="sign_in">Accedi</string>
+    <string name="sign_in_with_google">Accedi con Google</string>
+    <string name="sign_in_failed">Accesso fallito. Riprova.</string>
+
+    <string name="search_birthdays">Cerca compleanni…</string>
+    <string name="no_birthdays_yet">Nessun compleanno ancora</string>
+    <string name="no_results">Nessun risultato</string>
+    <string name="today">Oggi!</string>
+    <string name="tomorrow">Domani</string>
+    <string name="days_format">%d giorni</string>
+    <string name="turns_format">Compie %d anni</string>
+    <string name="in_days_format">Tra %d giorni</string>
+    <string name="falls_on">Cade di</string>
+
+    <string name="add_birthday">Aggiungi compleanno</string>
+    <string name="edit_birthday">Modifica compleanno</string>
+    <string name="name">Nome</string>
+    <string name="month">Mese</string>
+    <string name="day">Giorno</string>
+    <string name="birth_year">Anno di nascita</string>
+    <string name="turns">Compie</string>
+    <string name="optional">Facoltativo</string>
+    <string name="notes">Note</string>
+    <string name="save">Salva</string>
+    <string name="cancel">Annulla</string>
+
+    <string name="birthday">Compleanno</string>
+    <string name="next_birthday">Prossimo compleanno</string>
+    <string name="edit">Modifica</string>
+
+    <string name="enable_notifications">Attiva notifiche</string>
+    <string name="enable_notifications_description">Ricevi promemoria per non dimenticare nessun compleanno</string>
+    <string name="later">Più tardi</string>
+    <string name="enable">Attiva</string>
+
+    <string name="account">Account</string>
+    <string name="anonymous">Anonimo</string>
+    <string name="sign_out">Esci</string>
+    <string name="delete_all_my_data">Elimina tutti i miei dati</string>
+    <string name="notifications">Notifiche</string>
+    <string name="enabled">Attivate</string>
+    <string name="disabled">Disattivate</string>
+    <string name="notification_time">Orario notifiche</string>
+    <string name="loading">Caricamento…</string>
+    <string name="app_section">App</string>
+    <string name="share">Condividi</string>
+    <string name="privacy_policy">Informativa sulla privacy</string>
+    <string name="terms_of_use">Termini di utilizzo</string>
+    <string name="help_and_contact">Aiuto e contatti</string>
+
+    <string name="preferences">Preferenze</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="language">Lingua</string>
+    <string name="language_system">Sistema</string>
+
+    <string name="delete_data_subject">Elimina tutti i miei dati</string>
+    <string name="delete_data_body">Ciao, vorrei eliminare il mio account e tutti i miei dati dall\'app Promemoria Compleanni. La mia email registrata è: %1$s.\n\n%2$s.\n</string>
+    <string name="help_subject">Promemoria Compleanni - Aiuto</string>
+    <string name="help_body">Ciao, ho bisogno di aiuto con l\'app Promemoria Compleanni.\n</string>
+</resources>

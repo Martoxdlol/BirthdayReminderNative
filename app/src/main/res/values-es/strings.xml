@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">Recordatorio de Cumpleaños</string>
+
+    <string name="nav_home">Inicio</string>
+    <string name="nav_add">Agregar</string>
+    <string name="nav_settings">Ajustes</string>
+
+    <string name="sign_in">Iniciar sesión</string>
+    <string name="sign_in_with_google">Iniciar sesión con Google</string>
+    <string name="sign_in_failed">Error al iniciar sesión. Intentá de nuevo.</string>
+
+    <string name="search_birthdays">Buscar cumpleaños…</string>
+    <string name="no_birthdays_yet">No hay cumpleaños aún</string>
+    <string name="no_results">Sin resultados</string>
+    <string name="today">¡Hoy!</string>
+    <string name="tomorrow">Mañana</string>
+    <string name="days_format">%d días</string>
+    <string name="turns_format">Cumple %d</string>
+    <string name="in_days_format">En %d días</string>
+    <string name="falls_on">Cae en</string>
+
+    <string name="add_birthday">Agregar cumpleaños</string>
+    <string name="edit_birthday">Editar cumpleaños</string>
+    <string name="name">Nombre</string>
+    <string name="month">Mes</string>
+    <string name="day">Día</string>
+    <string name="birth_year">Año de nacimiento</string>
+    <string name="turns">Cumple</string>
+    <string name="optional">Opcional</string>
+    <string name="notes">Notas</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="birthday">Cumpleaños</string>
+    <string name="next_birthday">Próximo cumpleaños</string>
+    <string name="edit">Editar</string>
+
+    <string name="enable_notifications">Activar notificaciones</string>
+    <string name="enable_notifications_description">Recibí recordatorios para no olvidar ningún cumpleaños</string>
+    <string name="later">Más tarde</string>
+    <string name="enable">Activar</string>
+
+    <string name="account">Cuenta</string>
+    <string name="anonymous">Anónimo</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="delete_all_my_data">Borrar todos mis datos</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="enabled">Activadas</string>
+    <string name="disabled">Desactivadas</string>
+    <string name="notification_time">Horario de notificaciones</string>
+    <string name="loading">Cargando…</string>
+    <string name="app_section">App</string>
+    <string name="share">Compartir</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="terms_of_use">Términos de uso</string>
+    <string name="help_and_contact">Ayuda y contacto</string>
+
+    <string name="preferences">Preferencias</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="language">Idioma</string>
+    <string name="language_system">Sistema</string>
+
+    <string name="delete_data_subject">Borrar todos mis datos</string>
+    <string name="delete_data_body">Hola, quiero que borres mi cuenta y todos mis datos de la aplicación Recordatorio de Cumpleaños. Mi email registrado en la app es: %1$s.\n\n%2$s.\n</string>
+    <string name="help_subject">Recordatorio de Cumpleaños - Ayuda</string>
+    <string name="help_body">Hola, necesito ayuda con la aplicación Recordatorio de Cumpleaños.\n</string>
+</resources>

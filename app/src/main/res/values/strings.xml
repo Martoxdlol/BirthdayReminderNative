@@ -1,3 +1,79 @@
 <resources>
     <string name="app_name">Birthday Reminder</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_add">Add</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Login -->
+    <string name="sign_in">Sign in</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_failed">Sign in failed. Please try again.</string>
+
+    <!-- Home -->
+    <string name="search_birthdays">Search birthdays…</string>
+    <string name="no_birthdays_yet">No birthdays yet</string>
+    <string name="no_results">No results</string>
+    <string name="today">Today!</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="days_format">%d days</string>
+    <string name="turns_format">Turns %d</string>
+    <string name="in_days_format">In %d days</string>
+    <string name="falls_on">Falls on</string>
+
+    <!-- Add / Edit birthday -->
+    <string name="add_birthday">Add Birthday</string>
+    <string name="edit_birthday">Edit Birthday</string>
+    <string name="name">Name</string>
+    <string name="month">Month</string>
+    <string name="day">Day</string>
+    <string name="birth_year">Birth year</string>
+    <string name="turns">Turns</string>
+    <string name="optional">Optional</string>
+    <string name="notes">Notes</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Birthday detail -->
+    <string name="birthday">Birthday</string>
+    <string name="next_birthday">Next birthday</string>
+    <string name="edit">Edit</string>
+
+    <!-- Notification prompt -->
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="enable_notifications_description">Get reminders so you never miss a birthday</string>
+    <string name="later">Later</string>
+    <string name="enable">Enable</string>
+
+    <!-- Settings -->
+    <string name="account">Account</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="sign_out">Sign out</string>
+    <string name="delete_all_my_data">Delete all my data</string>
+    <string name="notifications">Notifications</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="notification_time">Notification time</string>
+    <string name="loading">Loading…</string>
+    <string name="app_section">App</string>
+    <string name="share">Share</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="help_and_contact">Help &amp; Contact</string>
+
+    <!-- Preferences -->
+    <string name="preferences">Preferences</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language">Language</string>
+    <string name="language_system">System</string>
+
+    <!-- Email templates -->
+    <string name="delete_data_subject">Delete all my data</string>
+    <string name="delete_data_body">Hi, I want you to delete my account and all my data from the Birthday Reminder app. My email registered in the app is: %1$s.\n\n%2$s.\n</string>
+    <string name="help_subject">Birthday Reminder Help</string>
+    <string name="help_body">Hi, I need help with the Birthday Reminder app.\n</string>
 </resources>

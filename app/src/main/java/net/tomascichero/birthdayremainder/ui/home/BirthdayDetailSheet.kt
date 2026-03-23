@@ -35,12 +35,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.ui.add.DayDropdown
 import net.tomascichero.birthdayremainder.ui.add.MonthDropdown
@@ -110,7 +112,7 @@ private fun DetailContent(
             )
             if (birthday.id.isNotEmpty()) {
                 IconButton(onClick = onEditClick) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+                    Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
                 }
             }
         }
@@ -120,7 +122,7 @@ private fun DetailContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         DetailRow(
-            label = "Birthday",
+            label = stringResource(R.string.birthday),
             value = if (birthday.noYear) {
                 birthday.birth.format(dateFormatter)
             } else {
@@ -129,29 +131,29 @@ private fun DetailContent(
         )
 
         if (nextAge != null) {
-            DetailRow(label = "Turns", value = nextAge.toString())
+            DetailRow(label = stringResource(R.string.turns), value = nextAge.toString())
         }
 
         DetailRow(
-            label = "Next birthday",
+            label = stringResource(R.string.next_birthday),
             value = when (daysUntil) {
-                0L -> "Today!"
-                1L -> "Tomorrow"
-                else -> "In $daysUntil days"
+                0L -> stringResource(R.string.today)
+                1L -> stringResource(R.string.tomorrow)
+                else -> stringResource(R.string.in_days_format, daysUntil.toInt())
             }
         )
 
         val nextBirthday = birthday.nextBirthday()
         val nextBirthdayDayOfWeek = nextBirthday.dayOfWeek
             .getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        DetailRow(label = "Falls on", value = nextBirthdayDayOfWeek)
+        DetailRow(label = stringResource(R.string.falls_on), value = nextBirthdayDayOfWeek)
 
         if (birthday.notes.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Notes",
+                text = stringResource(R.string.notes),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -249,14 +251,14 @@ private fun EditContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Edit Birthday",
+            text = stringResource(R.string.edit_birthday),
             style = MaterialTheme.typography.headlineSmall
         )
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = { Text(stringResource(R.string.name)) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
@@ -294,7 +296,7 @@ private fun EditContent(
             OutlinedTextField(
                 value = yearText,
                 onValueChange = { onYearChanged(it.filter { c -> c.isDigit() }.take(4)) },
-                label = { Text("Birth year") },
+                label = { Text(stringResource(R.string.birth_year)) },
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -302,13 +304,13 @@ private fun EditContent(
                 ),
                 singleLine = true,
                 supportingText = if (yearText.isEmpty()) {
-                    { Text("Optional") }
+                    { Text(stringResource(R.string.optional)) }
                 } else null
             )
             OutlinedTextField(
                 value = turnsText,
                 onValueChange = { onTurnsChanged(it.filter { c -> c.isDigit() }.take(3)) },
-                label = { Text("Turns") },
+                label = { Text(stringResource(R.string.turns)) },
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -316,7 +318,7 @@ private fun EditContent(
                 ),
                 singleLine = true,
                 supportingText = if (turnsText.isEmpty()) {
-                    { Text("Optional") }
+                    { Text(stringResource(R.string.optional)) }
                 } else null
             )
         }
@@ -324,7 +326,7 @@ private fun EditContent(
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
-            label = { Text("Notes") },
+            label = { Text(stringResource(R.string.notes)) },
             modifier = Modifier.fillMaxWidth(),
             minLines = 2,
             maxLines = 4
@@ -338,14 +340,14 @@ private fun EditContent(
                 onClick = onCancel,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
             Button(
                 onClick = { save() },
                 modifier = Modifier.weight(1f),
                 enabled = name.isNotBlank()
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         }
     }

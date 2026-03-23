@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">Lembrete de Aniversário</string>
+
+    <string name="nav_home">Início</string>
+    <string name="nav_add">Adicionar</string>
+    <string name="nav_settings">Configurações</string>
+
+    <string name="sign_in">Entrar</string>
+    <string name="sign_in_with_google">Entrar com Google</string>
+    <string name="sign_in_failed">Falha ao entrar. Tente novamente.</string>
+
+    <string name="search_birthdays">Buscar aniversários…</string>
+    <string name="no_birthdays_yet">Nenhum aniversário ainda</string>
+    <string name="no_results">Sem resultados</string>
+    <string name="today">Hoje!</string>
+    <string name="tomorrow">Amanhã</string>
+    <string name="days_format">%d dias</string>
+    <string name="turns_format">Faz %d anos</string>
+    <string name="in_days_format">Em %d dias</string>
+    <string name="falls_on">Cai em</string>
+
+    <string name="add_birthday">Adicionar aniversário</string>
+    <string name="edit_birthday">Editar aniversário</string>
+    <string name="name">Nome</string>
+    <string name="month">Mês</string>
+    <string name="day">Dia</string>
+    <string name="birth_year">Ano de nascimento</string>
+    <string name="turns">Faz</string>
+    <string name="optional">Opcional</string>
+    <string name="notes">Notas</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="birthday">Aniversário</string>
+    <string name="next_birthday">Próximo aniversário</string>
+    <string name="edit">Editar</string>
+
+    <string name="enable_notifications">Ativar notificações</string>
+    <string name="enable_notifications_description">Receba lembretes para não esquecer nenhum aniversário</string>
+    <string name="later">Mais tarde</string>
+    <string name="enable">Ativar</string>
+
+    <string name="account">Conta</string>
+    <string name="anonymous">Anônimo</string>
+    <string name="sign_out">Sair</string>
+    <string name="delete_all_my_data">Excluir todos os meus dados</string>
+    <string name="notifications">Notificações</string>
+    <string name="enabled">Ativadas</string>
+    <string name="disabled">Desativadas</string>
+    <string name="notification_time">Horário da notificação</string>
+    <string name="loading">Carregando…</string>
+    <string name="app_section">App</string>
+    <string name="share">Compartilhar</string>
+    <string name="privacy_policy">Política de privacidade</string>
+    <string name="terms_of_use">Termos de uso</string>
+    <string name="help_and_contact">Ajuda e contato</string>
+
+    <string name="preferences">Preferências</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="language">Idioma</string>
+    <string name="language_system">Sistema</string>
+
+    <string name="delete_data_subject">Excluir todos os meus dados</string>
+    <string name="delete_data_body">Olá, gostaria de excluir minha conta e todos os meus dados do aplicativo Lembrete de Aniversário. Meu email registrado no app é: %1$s.\n\n%2$s.\n</string>
+    <string name="help_subject">Lembrete de Aniversário - Ajuda</string>
+    <string name="help_body">Olá, preciso de ajuda com o aplicativo Lembrete de Aniversário.\n</string>
+</resources>

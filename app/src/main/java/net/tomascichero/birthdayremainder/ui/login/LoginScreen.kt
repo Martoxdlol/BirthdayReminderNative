@@ -25,11 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.CustomCredential
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -45,6 +45,7 @@ fun LoginScreen() {
     val scope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val signInFailedText = stringResource(R.string.sign_in_failed)
 
     Column(
         modifier = Modifier
@@ -55,14 +56,14 @@ fun LoginScreen() {
     ) {
         Image(
             painter = painterResource(id = R.drawable.app_icon),
-            contentDescription = "App icon",
+            contentDescription = null,
             modifier = Modifier.size(120.dp)
         )
 
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = "Sign in",
+            text = stringResource(R.string.sign_in),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -79,13 +80,13 @@ fun LoginScreen() {
                         val result = signInWithGoogle(context)
                         isLoading = false
                         if (!result) {
-                            errorMessage = "Sign in failed. Please try again."
+                            errorMessage = signInFailedText
                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Sign in with Google")
+                Text(stringResource(R.string.sign_in_with_google))
             }
         }
 

@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -23,43 +21,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.tomascichero.birthdayremainder.R
 
-private fun formatTime(time: String): String {
-    val parts = time.split(":")
-    if (parts.size < 2) return time
-    val hours = parts[0].toIntOrNull() ?: return time
-    val minutes = parts[1].toIntOrNull() ?: return time
-    return "%02d:%02d".format(hours, minutes)
-}
-
 @Composable
-fun NotificationTimePickerDialog(
+fun OptionPickerDialog(
+    title: String,
     options: List<String>,
-    selectedTime: String?,
-    onTimeSelected: (String) -> Unit,
+    selectedIndex: Int,
+    onSelected: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.notification_time)) },
+        title = { Text(title) },
         text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                options.forEach { time ->
-                    val isSelected = formatTime(time) == formatTime(selectedTime ?: "")
+            Column {
+                options.forEachIndexed { index, label ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable { onTimeSelected(time) }
+                            .clickable { onSelected(index) }
                             .padding(vertical = 8.dp, horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = isSelected,
+                            selected = index == selectedIndex,
                             onClick = null
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = formatTime(time),
+                            text = label,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
