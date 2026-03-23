@@ -63,6 +63,9 @@
     <string name="language">Idioma</string>
     <string name="language_system">Sistema</string>
 
+    <string name="delete">Excluir</string>
+    <string name="delete_birthday_confirm">Tem certeza que deseja excluir este aniversário?</string>
+
     <string name="share_birthdays">Compartilhar aniversários</string>
     <string name="someone_shared">%d aniversários compartilhados com você</string>
     <string name="add_all">Adicionar todos</string>

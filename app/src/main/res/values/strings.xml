@@ -71,6 +71,10 @@
     <string name="language">Language</string>
     <string name="language_system">System</string>
 
+    <!-- Delete -->
+    <string name="delete">Delete</string>
+    <string name="delete_birthday_confirm">Are you sure you want to delete this birthday?</string>
+
     <!-- Share -->
     <string name="share_birthdays">Share birthdays</string>
     <string name="someone_shared">%d birthdays shared with you</string>

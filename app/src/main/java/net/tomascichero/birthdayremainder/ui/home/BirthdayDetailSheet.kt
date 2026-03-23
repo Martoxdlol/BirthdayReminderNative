@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -59,6 +60,7 @@ fun BirthdayDetailSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isEditing by remember { mutableStateOf(false) }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -73,16 +75,49 @@ fun BirthdayDetailSheet(
         } else {
             DetailContent(
                 birthday = birthday,
-                onEditClick = { isEditing = true }
+                onEditClick = { isEditing = true },
+                onDeleteClick = { showDeleteConfirm = true }
             )
         }
+    }
+
+    if (showDeleteConfirm) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(stringResource(R.string.delete)) },
+            text = { Text(stringResource(R.string.delete_birthday_confirm)) },
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = {
+                        if (birthday.id.isNotEmpty()) {
+                            FirebaseFirestore.getInstance()
+                                .collection("birthdays")
+                                .document(birthday.id)
+                                .delete()
+                        }
+                        showDeleteConfirm = false
+                        onDismiss()
+                    }
+                ) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { showDeleteConfirm = false }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
 
 @Composable
 private fun DetailContent(
     birthday: Birthday,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     val dateFormatter = remember {
         DateTimeFormatter.ofPattern("MMMM d", Locale.getDefault())
@@ -111,6 +146,9 @@ private fun DetailContent(
                 modifier = Modifier.weight(1f)
             )
             if (birthday.id.isNotEmpty()) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
+                }
                 IconButton(onClick = onEditClick) {
                     Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
                 }
