@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,8 +42,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import net.tomascichero.birthdayremainder.data.ShareUtils
 import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.ui.add.DayDropdown
@@ -128,6 +132,8 @@ private fun DetailContent(
 
     val daysUntil = birthday.daysUntilNextBirthday()
     val nextAge = birthday.nextAge()
+    val context = LocalContext.current
+    val shareLabel = stringResource(R.string.share)
 
     Column(
         modifier = Modifier
@@ -145,6 +151,16 @@ private fun DetailContent(
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.weight(1f)
             )
+            IconButton(onClick = {
+                val url = ShareUtils.encodeShareUrl(listOf(birthday))
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, url)
+                }
+                context.startActivity(Intent.createChooser(intent, shareLabel))
+            }) {
+                Icon(Icons.Default.Share, contentDescription = shareLabel)
+            }
             if (birthday.id.isNotEmpty()) {
                 IconButton(onClick = onDeleteClick) {
                     Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
@@ -264,7 +280,7 @@ private fun EditContent(
                 "noYear" to noYear,
                 "notes" to notes,
                 "owner" to uid,
-                "app_version" to "2.0.0",
+                "app_version" to "3.0.0",
                 "updated_at" to com.google.firebase.Timestamp.now(),
             )
         )

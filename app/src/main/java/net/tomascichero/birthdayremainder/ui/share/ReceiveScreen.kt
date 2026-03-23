@@ -147,7 +147,7 @@ private fun addAllToFirestore(birthdays: List<ShareableBirthday>) {
             "noYear" to noYear,
             "notes" to (b.notes),
             "owner" to uid,
-            "app_version" to "2.0.0",
+            "app_version" to "3.0.0",
             "created_at" to Timestamp.now(),
             "updated_at" to Timestamp.now(),
         ))

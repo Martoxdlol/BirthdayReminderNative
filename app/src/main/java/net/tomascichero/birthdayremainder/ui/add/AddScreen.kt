@@ -126,7 +126,7 @@ fun AddScreen(
                 "noYear" to noYear,
                 "notes" to notes,
                 "owner" to uid,
-                "app_version" to "2.0.0",
+                "app_version" to "3.0.0",
                 "created_at" to com.google.firebase.Timestamp.now(),
                 "updated_at" to com.google.firebase.Timestamp.now(),
             )
