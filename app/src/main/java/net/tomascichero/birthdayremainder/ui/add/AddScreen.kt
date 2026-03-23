@@ -2,24 +2,31 @@ package net.tomascichero.birthdayremainder.ui.add
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -27,6 +34,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -34,34 +43,118 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScreen(modifier: Modifier = Modifier) {
-    var fullName by remember { mutableStateOf("") }
-    var month by remember { mutableStateOf("") }
-    var day by remember { mutableStateOf("") }
-    var year by remember { mutableStateOf("") }
+fun AddScreen(
+    onBirthdaySaved: (net.tomascichero.birthdayremainder.data.Birthday) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    var name by remember { mutableStateOf("") }
+    var selectedMonth by remember { mutableIntStateOf(LocalDate.now().monthValue) }
+    var selectedDay by remember { mutableIntStateOf(LocalDate.now().dayOfMonth) }
+    var yearText by remember { mutableStateOf("") }
+    var turnsText by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
-    var isMonthMenuExpanded by remember { mutableStateOf(false) }
-    var isDayMenuExpanded by remember { mutableStateOf(false) }
+    // Which field the user last edited
+    var lastEditedAgeField by remember { mutableStateOf<String?>(null) }
 
+    val currentYear = LocalDate.now().year
     val focusManager = LocalFocusManager.current
 
-    val months = listOf(
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    )
+    // Sync year <-> turns
+    fun onYearChanged(value: String) {
+        yearText = value
+        lastEditedAgeField = "year"
+        val y = value.toIntOrNull()
+        turnsText = if (y != null && y in 1900..currentYear + 1) {
+            (currentYear - y).toString()
+        } else {
+            ""
+        }
+    }
+
+    fun onTurnsChanged(value: String) {
+        turnsText = value
+        lastEditedAgeField = "turns"
+        val t = value.toIntOrNull()
+        yearText = if (t != null && t in 0..130) {
+            (currentYear - t).toString()
+        } else {
+            ""
+        }
+    }
+
+    fun resetForm() {
+        name = ""
+        selectedMonth = LocalDate.now().monthValue
+        selectedDay = LocalDate.now().dayOfMonth
+        yearText = ""
+        turnsText = ""
+        notes = ""
+        lastEditedAgeField = null
+    }
+
+    fun save() {
+        if (name.isBlank()) return
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val birthYear = yearText.toIntOrNull()
+        val noYear = birthYear == null
+        val date = java.util.GregorianCalendar(
+            if (noYear) 2000 else birthYear!!,
+            selectedMonth - 1,
+            selectedDay
+        ).time
+
+        val savedBirthday = net.tomascichero.birthdayremainder.data.Birthday(
+            id = "",
+            personName = name.trim(),
+            birth = LocalDate.of(
+                if (noYear) 2000 else birthYear!!,
+                selectedMonth,
+                selectedDay
+            ),
+            notes = notes,
+            noYear = noYear
+        )
+
+        FirebaseFirestore.getInstance().collection("birthdays").add(
+            hashMapOf(
+                "personName" to name.trim(),
+                "birth" to com.google.firebase.Timestamp(date),
+                "noYear" to noYear,
+                "notes" to notes,
+                "owner" to uid,
+                "app_version" to "2.0.0",
+                "created_at" to com.google.firebase.Timestamp.now(),
+                "updated_at" to com.google.firebase.Timestamp.now(),
+            )
+        )
+        resetForm()
+        onBirthdaySaved(savedBirthday)
+    }
+
+    val daysInMonth = YearMonth.of(
+        yearText.toIntOrNull() ?: currentYear,
+        selectedMonth
+    ).lengthOfMonth()
+
+    // Clamp day if month/year changed
+    if (selectedDay > daysInMonth) {
+        selectedDay = daysInMonth
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Name
         OutlinedTextField(
-            value = fullName,
-            onValueChange = { fullName = it },
-            label = { Text("Full Name") },
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Name") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
@@ -73,123 +166,177 @@ fun AddScreen(modifier: Modifier = Modifier) {
             singleLine = true
         )
 
-        ExposedDropdownMenuBox(
-            expanded = isMonthMenuExpanded,
-            onExpandedChange = { isMonthMenuExpanded = it }
-        ) {
-            OutlinedTextField(
-                value = month,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Month") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isMonthMenuExpanded)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = isMonthMenuExpanded,
-                onDismissRequest = { isMonthMenuExpanded = false }
-            ) {
-                months.forEach { selectionOption ->
-                    DropdownMenuItem(
-                        text = { Text(selectionOption) },
-                        onClick = {
-                            month = selectionOption
-                            isMonthMenuExpanded = false
-                            day = "" // Reset day when month changes
-                        }
-                    )
-                }
-            }
-        }
-
-        val monthNumber = months.indexOf(month) + 1
-        val yearNumber = year.toIntOrNull() ?: LocalDate.now().year
-        val daysInMonth = if (month.isNotEmpty()) {
-            YearMonth.of(yearNumber, monthNumber).lengthOfMonth()
-        } else {
-            31
-        }
-
-        ExposedDropdownMenuBox(
-            expanded = isDayMenuExpanded,
-            onExpandedChange = { isDayMenuExpanded = it }
-        ) {
-            OutlinedTextField(
-                value = day,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Day") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDayMenuExpanded)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = isDayMenuExpanded,
-                onDismissRequest = { isDayMenuExpanded = false }
-            ) {
-                for (d in 1..daysInMonth) {
-                    val dayOfWeek = if (month.isNotEmpty()) {
-                        LocalDate.of(yearNumber, monthNumber, d).dayOfWeek
-                            .getDisplayName(TextStyle.FULL, Locale.getDefault())
-                    } else ""
-                    DropdownMenuItem(
-                        text = { Text("$d ($dayOfWeek)") },
-                        onClick = {
-                            day = d.toString()
-                            isDayMenuExpanded = false
-                        }
-                    )
-                }
-            }
-        }
-
-        OutlinedTextField(
-            value = year,
-            onValueChange = {
-                year = it
-                day = "" // Reset day when year changes
-            },
-            label = { Text("Year (Optional)") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            ),
+        // Month + Day row
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            MonthDropdown(
+                selectedMonth = selectedMonth,
+                onMonthSelected = { selectedMonth = it },
+                modifier = Modifier.weight(1f)
+            )
+            DayDropdown(
+                selectedDay = selectedDay,
+                daysInMonth = daysInMonth,
+                month = selectedMonth,
+                year = yearText.toIntOrNull() ?: currentYear,
+                onDaySelected = { selectedDay = it },
+                modifier = Modifier.weight(1f)
+            )
+        }
 
+        // Year + Turns row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedTextField(
+                value = yearText,
+                onValueChange = { onYearChanged(it.filter { c -> c.isDigit() }.take(4)) },
+                label = { Text("Birth year") },
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Right) }
+                ),
+                singleLine = true,
+                supportingText = if (yearText.isEmpty()) {
+                    { Text("Optional") }
+                } else null
+            )
+            OutlinedTextField(
+                value = turnsText,
+                onValueChange = { onTurnsChanged(it.filter { c -> c.isDigit() }.take(3)) },
+                label = { Text("Turns") },
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
+                singleLine = true,
+                supportingText = if (turnsText.isEmpty()) {
+                    { Text("Optional") }
+                } else null
+            )
+        }
+
+        // Notes
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
             label = { Text("Notes") },
             modifier = Modifier.fillMaxWidth(),
-            minLines = 2
+            minLines = 2,
+            maxLines = 4
         )
 
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Save button
         Button(
-            onClick = {
-                // Handle form submission here
-                println("Full Name: $fullName")
-                println("Month: $month")
-                println("Day: $day")
-                println("Year: $year")
-                println("Notes: $notes")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            onClick = { save() },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = name.isNotBlank()
         ) {
             Text("Add Birthday")
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MonthDropdown(
+    selectedMonth: Int,
+    onMonthSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val monthName = java.time.Month.of(selectedMonth)
+        .getDisplayName(TextStyle.FULL, Locale.getDefault())
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = monthName,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Month") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            for (m in 1..12) {
+                val name = java.time.Month.of(m)
+                    .getDisplayName(TextStyle.FULL, Locale.getDefault())
+                DropdownMenuItem(
+                    text = { Text(name) },
+                    onClick = {
+                        onMonthSelected(m)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DayDropdown(
+    selectedDay: Int,
+    daysInMonth: Int,
+    month: Int,
+    year: Int,
+    onDaySelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = selectedDay.toString(),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Day") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            for (d in 1..daysInMonth) {
+                val dayOfWeek = LocalDate.of(year, month, d).dayOfWeek
+                    .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                DropdownMenuItem(
+                    text = { Text("$d ($dayOfWeek)") },
+                    onClick = {
+                        onDaySelected(d)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }

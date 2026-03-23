@@ -42,8 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import net.tomascichero.birthdayremainder.data.sampleBirthdays
+import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.ui.add.AddScreen
+import net.tomascichero.birthdayremainder.ui.home.BirthdayDetailSheet
 import net.tomascichero.birthdayremainder.ui.home.BirthdayListScreen
 import net.tomascichero.birthdayremainder.ui.login.LoginScreen
 import net.tomascichero.birthdayremainder.ui.settings.SettingsScreen
@@ -155,13 +156,7 @@ fun AppMainContainer(innerPaddingValues: PaddingValues, selectedItem: Int, filte
 
     val imePaddingBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
 
-    val filteredBirthdays = if (filter.isEmpty()) {
-        sampleBirthdays
-    } else {
-        sampleBirthdays.filter {
-            it.name.contains(filter, ignoreCase = true)
-        }
-    }
+    var sheetBirthday by remember { mutableStateOf<Birthday?>(null) }
 
     var paddingBottom = imePaddingBottom
     if(innerPaddingValues.calculateBottomPadding() > paddingBottom) {
@@ -173,13 +168,17 @@ fun AppMainContainer(innerPaddingValues: PaddingValues, selectedItem: Int, filte
         bottom = paddingBottom
     )) {
         when (selectedItem) {
-            0 -> BirthdayListScreen(
-                birthdays = filteredBirthdays,
-            )
-
-            1 -> AddScreen()
+            0 -> BirthdayListScreen(filter = filter)
+            1 -> AddScreen(onBirthdaySaved = { sheetBirthday = it })
             2 -> SettingsScreen()
         }
+    }
+
+    sheetBirthday?.let { birthday ->
+        BirthdayDetailSheet(
+            birthday = birthday,
+            onDismiss = { sheetBirthday = null }
+        )
     }
 }
 
