@@ -1,4 +1,3 @@
-// MainActivity.kt
 package net.tomascichero.birthdayremainder
 
 import android.os.Bundle
@@ -9,8 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -23,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,22 +39,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import net.tomascichero.birthdayremainder.data.sampleBirthdays
 import net.tomascichero.birthdayremainder.ui.add.AddScreen
 import net.tomascichero.birthdayremainder.ui.home.BirthdayListScreen
+import net.tomascichero.birthdayremainder.ui.login.LoginScreen
 import net.tomascichero.birthdayremainder.ui.settings.SettingsScreen
 import net.tomascichero.birthdayremainder.ui.theme.BirthdayReminderTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.isImeVisible
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.unit.dp
 
 
 class MainActivity : ComponentActivity() {
@@ -56,9 +56,31 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BirthdayReminderTheme {
-                AppScreen()
+                AuthWrapper()
             }
         }
+    }
+}
+
+@Composable
+fun AuthWrapper() {
+    val auth = FirebaseAuth.getInstance()
+    var user by remember { mutableStateOf(auth.currentUser) }
+
+    DisposableEffect(auth) {
+        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            user = firebaseAuth.currentUser
+        }
+        auth.addAuthStateListener(listener)
+        onDispose {
+            auth.removeAuthStateListener(listener)
+        }
+    }
+
+    if (user != null) {
+        AppScreen()
+    } else {
+        LoginScreen()
     }
 }
 

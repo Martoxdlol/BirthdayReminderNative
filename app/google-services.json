@@ -1,0 +1,147 @@
+{
+  "project_info": {
+    "project_number": "1018512304007",
+    "firebase_url": "https://birthday-remainder-app.firebaseio.com",
+    "project_id": "birthday-remainder-app",
+    "storage_bucket": "birthday-remainder-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018512304007:android:6f072cf76a6d31726b5522",
+        "android_client_info": {
+          "package_name": "com.example.birthday_reminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1018512304007-o049tdgucndi092te4bc0c1bjk8g0ss3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCER1YAnYZxnaasCam2QEAQeApJos0L1G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1018512304007-o049tdgucndi092te4bc0c1bjk8g0ss3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1018512304007-60mk697phbofj0skvubs5banqdik6ph8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.tomascichero.birthdayremainder"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018512304007:android:c5bcfb60f613e2a76b5522",
+        "android_client_info": {
+          "package_name": "net.tomascichero.birthdayremainder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1018512304007-37g6mopnqacg7hsedrd7monil2rgjb6k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "d3eb7eed897368769c4e4ccaa54e7cb914e81df4"
+          }
+        },
+        {
+          "client_id": "1018512304007-3ukrlmu658hv3s2aj4rm91lvk5hqq9kt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "ee4a2512bec696e8ecdd0134cd2d763eefba640d"
+          }
+        },
+        {
+          "client_id": "1018512304007-arb0c9mrs3h3ttqaiaojn394hbmvf5ar.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "9f3397563ead31c24a5cb4e71e6d30a59fa3da0b"
+          }
+        },
+        {
+          "client_id": "1018512304007-j2c01nps9ga0a2i2jgfqcclp46uqga9j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "49f865e07fb4ca5266f88dbd1df85ca299e5db8b"
+          }
+        },
+        {
+          "client_id": "1018512304007-l8k04p29m7npfmiot15hcgfsd7abuh5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "410ea20f15a447de0e3502b074a12516a7afac76"
+          }
+        },
+        {
+          "client_id": "1018512304007-q8kjar4si78e1oah3llacgh9d1cbk8vg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "b378752e7d1a75ab9c35b8956b9954e6454a7a69"
+          }
+        },
+        {
+          "client_id": "1018512304007-r3kg7mqi8ghn0nskp7sk2d0ma2r8ctte.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "c921e2b9e8e916126ff2f7fde121ddacb33bdeb9"
+          }
+        },
+        {
+          "client_id": "1018512304007-r3vv9osm4ps0fteacfobisovmoufkebj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.tomascichero.birthdayremainder",
+            "certificate_hash": "0781c2ea8740ac1c428db7cd3e2671c2941d7613"
+          }
+        },
+        {
+          "client_id": "1018512304007-o049tdgucndi092te4bc0c1bjk8g0ss3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCER1YAnYZxnaasCam2QEAQeApJos0L1G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1018512304007-o049tdgucndi092te4bc0c1bjk8g0ss3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1018512304007-60mk697phbofj0skvubs5banqdik6ph8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.tomascichero.birthdayremainder"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
