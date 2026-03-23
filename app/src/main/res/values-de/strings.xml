@@ -63,6 +63,12 @@
     <string name="language">Sprache</string>
     <string name="language_system">System</string>
 
+    <string name="share_birthdays">Geburtstage teilen</string>
+    <string name="someone_shared">%d Geburtstage mit dir geteilt</string>
+    <string name="add_all">Alle hinzufügen</string>
+    <string name="invalid_share_link">Ungültiger Link</string>
+    <string name="selected_count">%d ausgewählt</string>
+
     <string name="delete_data_subject">Alle meine Daten löschen</string>
     <string name="delete_data_body">Hallo, ich möchte mein Konto und alle meine Daten aus der App Geburtstagserinnerung löschen. Meine registrierte E-Mail ist: %1$s.\n\n%2$s.\n</string>
     <string name="help_subject">Geburtstagserinnerung - Hilfe</string>

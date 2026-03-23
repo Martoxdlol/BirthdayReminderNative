@@ -5,9 +5,23 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+import java.util.Properties
+val envFile = rootProject.file(".env")
+val envProps = Properties()
+if (envFile.exists()) { envProps.load(envFile.inputStream()) }
+
 android {
     namespace = "net.tomascichero.birthdayremainder"
     compileSdk = 36
+
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("android_apps_signature_store.keystore")
+            storePassword = envProps.getProperty("KEYSTORE_PASSWORD")
+            keyAlias = "play_store_personal"
+            keyPassword = envProps.getProperty("KEYSTORE_PASSWORD")
+        }
+    }
 
     defaultConfig {
         applicationId = "net.tomascichero.birthdayremainder"
@@ -22,6 +36,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

@@ -63,6 +63,12 @@
     <string name="language">Lingua</string>
     <string name="language_system">Sistema</string>
 
+    <string name="share_birthdays">Condividi compleanni</string>
+    <string name="someone_shared">%d compleanni condivisi con te</string>
+    <string name="add_all">Aggiungi tutti</string>
+    <string name="invalid_share_link">Link non valido</string>
+    <string name="selected_count">%d selezionati</string>
+
     <string name="delete_data_subject">Elimina tutti i miei dati</string>
     <string name="delete_data_body">Ciao, vorrei eliminare il mio account e tutti i miei dati dall\'app Promemoria Compleanni. La mia email registrata è: %1$s.\n\n%2$s.\n</string>
     <string name="help_subject">Promemoria Compleanni - Aiuto</string>

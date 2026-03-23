@@ -63,6 +63,12 @@
     <string name="language">Langue</string>
     <string name="language_system">Système</string>
 
+    <string name="share_birthdays">Partager des anniversaires</string>
+    <string name="someone_shared">%d anniversaires partagés avec vous</string>
+    <string name="add_all">Tout ajouter</string>
+    <string name="invalid_share_link">Lien invalide</string>
+    <string name="selected_count">%d sélectionnés</string>
+
     <string name="delete_data_subject">Supprimer toutes mes données</string>
     <string name="delete_data_body">Bonjour, je souhaite supprimer mon compte et toutes mes données de l\'application Rappel d\'Anniversaire. Mon email enregistré est : %1$s.\n\n%2$s.\n</string>
     <string name="help_subject">Rappel d\'Anniversaire - Aide</string>

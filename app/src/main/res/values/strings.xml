@@ -71,6 +71,13 @@
     <string name="language">Language</string>
     <string name="language_system">System</string>
 
+    <!-- Share -->
+    <string name="share_birthdays">Share birthdays</string>
+    <string name="someone_shared">%d birthdays shared with you</string>
+    <string name="add_all">Add all</string>
+    <string name="invalid_share_link">Invalid share link</string>
+    <string name="selected_count">%d selected</string>
+
     <!-- Email templates -->
     <string name="delete_data_subject">Delete all my data</string>
     <string name="delete_data_body">Hi, I want you to delete my account and all my data from the Birthday Reminder app. My email registered in the app is: %1$s.\n\n%2$s.\n</string>

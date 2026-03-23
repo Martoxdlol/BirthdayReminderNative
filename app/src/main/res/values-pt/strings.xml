@@ -63,6 +63,12 @@
     <string name="language">Idioma</string>
     <string name="language_system">Sistema</string>
 
+    <string name="share_birthdays">Compartilhar aniversários</string>
+    <string name="someone_shared">%d aniversários compartilhados com você</string>
+    <string name="add_all">Adicionar todos</string>
+    <string name="invalid_share_link">Link inválido</string>
+    <string name="selected_count">%d selecionados</string>
+
     <string name="delete_data_subject">Excluir todos os meus dados</string>
     <string name="delete_data_body">Olá, gostaria de excluir minha conta e todos os meus dados do aplicativo Lembrete de Aniversário. Meu email registrado no app é: %1$s.\n\n%2$s.\n</string>
     <string name="help_subject">Lembrete de Aniversário - Ajuda</string>

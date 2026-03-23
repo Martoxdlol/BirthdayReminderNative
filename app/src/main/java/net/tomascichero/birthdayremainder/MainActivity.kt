@@ -1,5 +1,6 @@
 package net.tomascichero.birthdayremainder
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -42,12 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.preferences.AppPreferences
 import net.tomascichero.birthdayremainder.preferences.ThemeMode
@@ -56,22 +58,39 @@ import net.tomascichero.birthdayremainder.ui.home.BirthdayDetailSheet
 import net.tomascichero.birthdayremainder.ui.home.BirthdayListScreen
 import net.tomascichero.birthdayremainder.ui.login.LoginScreen
 import net.tomascichero.birthdayremainder.ui.settings.SettingsScreen
+import net.tomascichero.birthdayremainder.ui.share.ReceiveScreen
 import net.tomascichero.birthdayremainder.ui.theme.BirthdayReminderTheme
 
 
 class MainActivity : AppCompatActivity() {
+
+    val pendingShareUrl = MutableStateFlow<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppPreferences.init(this)
+        handleIncomingIntent(intent)
         enableEdgeToEdge()
         setContent {
-            AppRoot()
+            AppRoot(this)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIncomingIntent(intent)
+    }
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        val data = intent?.data
+        if (data != null && data.host == "birthday-remainder-app.web.app" && data.path?.startsWith("/share") == true) {
+            pendingShareUrl.value = data.toString()
         }
     }
 }
 
 @Composable
-fun AppRoot() {
+fun AppRoot(activity: MainActivity? = null) {
     val themeMode by AppPreferences.themeMode.collectAsState()
 
     val darkTheme = when (themeMode) {
@@ -81,12 +100,12 @@ fun AppRoot() {
     }
 
     BirthdayReminderTheme(darkTheme = darkTheme) {
-        AuthWrapper()
+        AuthWrapper(activity)
     }
 }
 
 @Composable
-fun AuthWrapper() {
+fun AuthWrapper(activity: MainActivity? = null) {
     val auth = FirebaseAuth.getInstance()
     var user by remember { mutableStateOf(auth.currentUser) }
 
@@ -101,7 +120,7 @@ fun AuthWrapper() {
     }
 
     if (user != null) {
-        AppScreen()
+        AppScreen(activity)
     } else {
         LoginScreen()
     }
@@ -109,7 +128,7 @@ fun AuthWrapper() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun AppScreen() {
+fun AppScreen(activity: MainActivity? = null) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedItem by rememberSaveable { mutableIntStateOf(0) }
     val navItems = listOf(
@@ -122,6 +141,16 @@ fun AppScreen() {
 
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
+    val pendingUrl by activity?.pendingShareUrl?.collectAsState() ?: remember { mutableStateOf(null) }
+
+    if (pendingUrl != null) {
+        ReceiveScreen(
+            url = pendingUrl!!,
+            onDone = { activity?.pendingShareUrl?.value = null }
+        )
+        return
+    }
 
     Scaffold(
         modifier = Modifier
