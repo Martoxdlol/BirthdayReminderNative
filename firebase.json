@@ -1,6 +1,11 @@
 {
   "hosting": {
     "public": "web/dist",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "i18n": {
+      "root": "/"
+    },
     "ignore": [
       "firebase.json",
       "**/.*",
