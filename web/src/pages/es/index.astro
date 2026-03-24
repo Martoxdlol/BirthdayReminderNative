@@ -1,0 +1,51 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Card from "../../components/Card.astro";
+import IndexLayout from "../../layouts/IndexLayout.astro";
+---
+
+<IndexLayout title="Recordatorio de cumpleaños" lang="es">
+	<main>
+		<h1>
+			<span class="text-gradient">Recordador de cumpleaños</span>
+		</h1>
+		<p class="instructions">
+			<span class="text-gradient">Recordador de cumpleaños</span> es una aplicación
+			que te ayuda a recordar cumpleaños. Puedes agregar cumpleaños y recibir
+			notificaciones cuando se acerquen.
+		</p>
+		<ul role="list" class="link-card-grid">
+			<Card
+				href="https://birthday-remainder-app.web.app/app/"
+				title="Abrir la aplicación instalada o web"
+				body="Usa la aplicación en la web, sin necesidad de descargarla."
+			/>
+			<Card
+				href="https://play.google.com/store/apps/details?id=net.tomascichero.birthdayremainder"
+				title="Ver en Play Store"
+				body="Obtén la aplicación en tu teléfono o tableta Android."
+			/>
+			<Card
+				href="./privacy-policy"
+				title="Política de privacidad"
+				body="Lee nuestra política de privacidad para conocer cómo manejamos tus datos."
+			/>
+			<Card
+				href="./terms-of-use"
+				title="Términos de uso"
+				body="Lee nuestros términos de uso para saber cómo puedes usar la aplicación."
+			/>
+		</ul>
+		<p class="instructions">
+			Este es un proyecto de código abierto. Puedes ver el código fuente
+			en <a href="https://github.com/Martoxdlol/birthday_reminder"
+				>https://github.com/Martoxdlol/birthday_reminder</a
+			>
+		</p>
+		<p class="instructions">
+			Si necesitas ayuda, contáctame en <a
+				href="mailto:martoxdlol@gmail.com">martoxdlol@gmail.com</a
+			>
+		</p>
+	</main>
+</IndexLayout>

@@ -1,0 +1,51 @@
+---
+import Card from "../components/Card.astro";
+import IndexLayout from "../layouts/IndexLayout.astro";
+---
+
+<IndexLayout title="Birthday Reminder" lang="en">
+	<main>
+		<h1>Welcome to <span class="text-gradient">Birthday Reminder</span></h1>
+		<p class="instructions">
+			<span class="text-gradient">Birthday Reminder</span> is an app that helps
+			you remember birthdays. You can add birthdays and get notified when they're
+			coming up.
+		</p>
+		<ul role="list" class="link-card-grid">
+			<Card
+				href="https://birthday-remainder-app.web.app/app/"
+				title="Open App"
+				body="Use the installed app or on the web, no download required."
+			/>
+			<Card
+				href="https://play.google.com/store/apps/details?id=net.tomascichero.birthdayremainder"
+				title="View on Play Store"
+				body="Get the app on your Android phone or tablet."
+			/>
+			<Card
+				href="/privacy-policy"
+				title="Privacy Policy"
+				body="Read our privacy policy to learn how we handle your data."
+			/>
+			<Card
+				href="/terms-of-use"
+				title="Terms of Use"
+				body="Read our terms of use to learn how you can use the app."
+			/>
+		</ul>
+		<p class="instructions">
+			This is a open source project. You can view the source code on <a
+				href="https://github.com/Martoxdlol/birthday_reminder"
+				>https://github.com/Martoxdlol/birthday_reminder</a
+			>
+		</p>
+		<p class="instructions">
+			If you need help contact me at <a href="mailto:martoxdlol@gmail.com"
+				>martoxdlol@gmail.com</a
+			>
+		</p>
+		<p class="instructions">
+			If you need to delete yout account see <a href="delete-my-data">delete my data</a>
+		</p>
+	</main>
+</IndexLayout>

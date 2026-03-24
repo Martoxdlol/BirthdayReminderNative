@@ -27,7 +27,7 @@ android {
         applicationId = "net.tomascichero.birthdayremainder"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
+        versionCode = 7
         versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -35,12 +35,18 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
         }
     }
     compileOptions {
