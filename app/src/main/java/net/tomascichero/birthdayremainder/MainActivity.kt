@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,6 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -65,10 +68,12 @@ import net.tomascichero.birthdayremainder.ui.theme.BirthdayReminderTheme
 class MainActivity : AppCompatActivity() {
 
     val pendingShareUrl = MutableStateFlow<String?>(null)
+    val pendingBirthdayId = MutableStateFlow<Pair<String, Long>?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppPreferences.init(this)
+        createNotificationChannel()
         if (savedInstanceState == null) {
             handleIncomingIntent(intent)
         }
@@ -83,10 +88,38 @@ class MainActivity : AppCompatActivity() {
         handleIncomingIntent(intent)
     }
 
+    private fun createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = android.app.NotificationChannel(
+                "birthdays",
+                "Birthdays",
+                android.app.NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Birthday reminder notifications"
+            }
+            val manager = getSystemService(android.app.NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
     private fun handleIncomingIntent(intent: Intent?) {
-        val data = intent?.data
+        intent ?: return
+
+        val data = intent.data
         if (data != null && data.host == "birthday-remainder-app.web.app" && data.path?.startsWith("/share") == true) {
             pendingShareUrl.value = data.toString()
+            return
+        }
+
+        // birthday_id comes from:
+        // 1. Our custom PendingIntent (foreground notification tap) — as a string extra
+        // 2. FCM system notification tap (background) — as a bundle extra in the data payload
+        val birthdayId = intent.getStringExtra("birthday_id")
+            ?: intent.extras?.getString("birthday_id")
+        if (birthdayId != null) {
+            pendingBirthdayId.value = Pair(birthdayId, System.currentTimeMillis())
+            // Remove the extra so it doesn't re-trigger on config changes
+            intent.removeExtra("birthday_id")
         }
     }
 }
@@ -200,18 +233,43 @@ fun AppScreen(activity: MainActivity? = null) {
         AppMainContainer(
             innerPaddingValues = innerPadding,
             selectedItem = selectedItem,
-            filter = searchQuery
+            filter = searchQuery,
+            activity = activity
         )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AppMainContainer(innerPaddingValues: PaddingValues, selectedItem: Int, filter: String) {
+fun AppMainContainer(
+    innerPaddingValues: PaddingValues,
+    selectedItem: Int,
+    filter: String,
+    activity: MainActivity? = null
+) {
 
     val imePaddingBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
 
     var sheetBirthday by remember { mutableStateOf<Birthday?>(null) }
+
+    val pendingBirthday by activity?.pendingBirthdayId?.collectAsState() ?: remember { mutableStateOf(null) }
+
+    LaunchedEffect(pendingBirthday) {
+        val (id, _) = pendingBirthday ?: return@LaunchedEffect
+        try {
+            val doc = FirebaseFirestore.getInstance()
+                .collection("birthdays")
+                .document(id)
+                .get()
+                .await()
+            if (doc.exists()) {
+                doc.data?.let { data ->
+                    try { sheetBirthday = Birthday.fromFirestore(doc.id, data) } catch (_: Exception) { }
+                }
+            }
+        } catch (_: Exception) { }
+        activity?.pendingBirthdayId?.value = null
+    }
 
     var paddingBottom = imePaddingBottom
     if(innerPaddingValues.calculateBottomPadding() > paddingBottom) {
