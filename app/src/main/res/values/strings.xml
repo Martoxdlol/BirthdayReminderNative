@@ -77,6 +77,7 @@
 
     <!-- Share -->
     <string name="share_birthdays">Share birthdays</string>
+    <string name="shared_birthdays_title">Shared birthdays</string>
     <string name="someone_shared">%d birthdays shared with you</string>
     <string name="add_all">Add all</string>
     <string name="invalid_share_link">Invalid share link</string>

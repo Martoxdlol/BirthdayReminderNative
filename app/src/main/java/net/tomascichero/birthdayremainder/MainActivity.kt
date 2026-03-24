@@ -69,7 +69,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppPreferences.init(this)
-        handleIncomingIntent(intent)
+        if (savedInstanceState == null) {
+            handleIncomingIntent(intent)
+        }
         enableEdgeToEdge()
         setContent {
             AppRoot(this)

@@ -67,6 +67,7 @@
     <string name="delete_birthday_confirm">Möchtest du diesen Geburtstag wirklich löschen?</string>
 
     <string name="share_birthdays">Geburtstage teilen</string>
+    <string name="shared_birthdays_title">Geteilte Geburtstage</string>
     <string name="someone_shared">%d Geburtstage mit dir geteilt</string>
     <string name="add_all">Alle hinzufügen</string>
     <string name="invalid_share_link">Ungültiger Link</string>

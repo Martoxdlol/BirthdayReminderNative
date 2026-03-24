@@ -11,9 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,9 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.data.ShareUtils
 import net.tomascichero.birthdayremainder.data.ShareableBirthday
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReceiveScreen(
     url: String,
@@ -35,62 +38,75 @@ fun ReceiveScreen(
 ) {
     val birthdays = ShareUtils.decodeShareUrl(url)
 
-    if (birthdays.isEmpty()) {
-        Column(
-            modifier = modifier.fillMaxSize().padding(32.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(R.string.invalid_share_link),
-                style = MaterialTheme.typography.bodyLarge
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.shared_birthdays_title)) }
             )
-            Button(onClick = onDone, modifier = Modifier.padding(top = 16.dp)) {
-                Text(stringResource(R.string.cancel))
-            }
         }
-        return
-    }
-
-    val dateFormatter = DateTimeFormatter.ofPattern("MMMM d", Locale.getDefault())
-
-    Column(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
+    ) { innerPadding ->
+        if (birthdays.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = stringResource(R.string.someone_shared, birthdays.size),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    text = stringResource(R.string.invalid_share_link),
+                    style = MaterialTheme.typography.bodyLarge
                 )
+                Button(onClick = onDone, modifier = Modifier.padding(top = 16.dp)) {
+                    Text(stringResource(R.string.cancel))
+                }
             }
-            items(birthdays) { birthday ->
-                ShareableBirthdayCard(birthday)
-            }
-        }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.someone_shared, birthdays.size),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                    items(birthdays) { birthday ->
+                        ShareableBirthdayCard(birthday)
+                    }
+                }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            OutlinedButton(
-                onClick = onDone,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-            Button(
-                onClick = {
-                    addAllToFirestore(birthdays)
-                    onDone()
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(stringResource(R.string.add_all))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onDone,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                    Button(
+                        onClick = {
+                            addAllToFirestore(birthdays)
+                            onDone()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(stringResource(R.string.add_all))
+                    }
+                }
             }
         }
     }
