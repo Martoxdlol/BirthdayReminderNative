@@ -1,12 +1,14 @@
-process.env.TZ = 'UTC';
+process.env.TZ = "UTC";
 
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
-const firebase = require("firebase-admin");
-firebase.initializeApp();
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 
-const firestore = firebase.firestore();
+initializeApp();
+const db = getFirestore();
+
 const { notificationsFunction } = require("./notifications");
 
 exports.scheduledHourlyNotificationSendingTask = onSchedule(
@@ -19,7 +21,7 @@ exports.scheduledHourlyNotificationSendingTask = onSchedule(
 exports.manually = onRequest(
     { timeoutSeconds: 540 },
     async (request, response) => {
-        logger.info("Manually function triggered", { structuredData: true });
+        logger.info("Manually function triggered");
         await notificationsFunction();
         response.send("Done");
     }
@@ -30,19 +32,19 @@ exports.shareBirthday = onCall(async (request) => {
 
     if (!email) {
         throw new HttpsError(
-            "invalid-argument",
+            "unauthenticated",
             "The function must be called by an authenticated user with an email."
         );
     }
 
     const birthdayId = request.data.birthdayId;
-    const birthday = (await firestore.collection("birthdays").doc(birthdayId).get()).data();
+    const birthday = (await db.collection("birthdays").doc(birthdayId).get()).data();
 
     if (!birthday || birthday.owner !== request.auth.uid) {
         throw new HttpsError("not-found", "Birthday not found");
     }
 
-    const doc = await firestore.collection("share_birthday").add({
+    const doc = await db.collection("share_birthday").add({
         birthdayId,
         email,
     });

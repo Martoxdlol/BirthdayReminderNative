@@ -20,4 +20,3 @@ local.properties
 node_modules
 /web/dist
 /web/.astro
-/functions/package-lock.json
