@@ -22,3 +22,4 @@ functions/test-notification.js
 functions/run-for-user.js
 /web/dist
 /web/.astro
+.kotlin
