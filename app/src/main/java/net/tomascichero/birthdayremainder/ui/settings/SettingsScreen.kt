@@ -99,7 +99,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             scope.launch {
                 NotificationsManager.enable(context)
                 notificationsEnabled = true
-                NotificationsManager.updateUserInfo()
+                NotificationsManager.updateUserInfo(context)
             }
         }
     }
@@ -180,7 +180,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                             notificationsEnabled = true
                         }
                     } else {
-                        NotificationsManager.disable()
+                        NotificationsManager.disable(context)
                         notificationsEnabled = false
                     }
                 }
@@ -284,7 +284,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             onTimeSelected = { time ->
                 selectedTime = time
                 showTimePicker = false
-                scope.launch { NotificationsManager.setTime(time) }
+                scope.launch { NotificationsManager.setTime(context, time) }
             },
             onDismiss = { showTimePicker = false }
         )

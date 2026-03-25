@@ -62,10 +62,16 @@ module.exports.notificationsFunction = async function notificationsFunction() {
                 continue;
             }
 
+            let authedUser;
+            try {
+                authedUser = await getAuth().getUser(user.user_id);
+            } catch (error) {
+                logger.error(`User not found in Auth: ${user.user_id} — ${error.message}`);
+                continue;
+            }
+
             const snapshot = await db.collection("birthdays").where("owner", "==", user.user_id).get();
             const birthdays = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-            const authedUser = await getAuth().getUser(user.user_id);
 
             for (const birthday of birthdays) {
                 const offset = timezone * 60 * 60 * 1000;
@@ -110,18 +116,27 @@ async function sendNotification(birthday, user, isFuture) {
         (birthday.notes ? `(${birthday.notes}) ` : "") +
         birthday.birth.toDate().toLocaleDateString(lang, { day: "numeric", month: "long" });
 
-    return await getMessaging().send({
+    const message = {
         token: user.token,
         notification: { title, body: description },
-        android: {
-            notification: {
-                clickAction: "OPEN_BIRTHDAY",
-            },
-        },
         data: {
             birthday_id: birthday.id,
         },
-    });
+    };
+
+    if (user.app_version >= "3.0.2") {
+        message.android = { notification: { clickAction: "OPEN_BIRTHDAY" } };
+    }
+
+    try {
+        return await getMessaging().send(message);
+    } catch (error) {
+        logger.error(`Failed to send notification to token ${user.token}: ${error.message}`);
+        if (error.code === "messaging/registration-token-not-registered") {
+            logger.info(`Deleting stale token: ${user.token}`);
+            await db.collection("fcm_tokens").doc(user.token).delete();
+        }
+    }
 }
 
 async function getConfig() {
@@ -161,9 +176,10 @@ async function getCurrentOption(config) {
     const minutes = utc0.getMinutes();
     const seconds = utc0.getSeconds();
 
-    let currentTimeOption = { hour: hours, minute: minutes, second: seconds };
+    const sortedTimes = [...config.updateTimes].sort();
+    let currentTimeOption = null;
 
-    for (const configTime of config.updateTimes) {
+    for (const configTime of sortedTimes) {
         const [configHour, configMinute, configSecond] = configTime.split(":").map(Number);
 
         if (
@@ -173,6 +189,12 @@ async function getCurrentOption(config) {
         ) {
             currentTimeOption = { hour: configHour, minute: configMinute, second: configSecond };
         }
+    }
+
+    if (!currentTimeOption) {
+        const last = sortedTimes[sortedTimes.length - 1];
+        const [h, m, s] = last.split(":").map(Number);
+        currentTimeOption = { hour: h, minute: m, second: s };
     }
 
     return currentTimeOption;

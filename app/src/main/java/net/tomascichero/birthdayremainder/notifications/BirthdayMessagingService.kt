@@ -74,6 +74,9 @@ class BirthdayMessagingService : FirebaseMessagingService() {
         }
 
         val locale = Locale.getDefault()
+        val versionName = try {
+            packageManager.getPackageInfo(packageName, 0).versionName ?: ""
+        } catch (_: Exception) { "" }
 
         val body = hashMapOf<String, Any>(
             "user_id" to user.uid,
@@ -82,6 +85,7 @@ class BirthdayMessagingService : FirebaseMessagingService() {
             "country" to (locale.country ?: ""),
             "timezone" to (TimeZone.getDefault().rawOffset / 3600000),
             "platform" to "android",
+            "app_version" to versionName,
         )
 
         FirebaseFirestore.getInstance()

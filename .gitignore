@@ -18,5 +18,7 @@ local.properties
 /*.keystore
 .env
 node_modules
+functions/test-notification.js
+functions/run-for-user.js
 /web/dist
 /web/.astro

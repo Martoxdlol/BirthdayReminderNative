@@ -48,19 +48,19 @@ object NotificationsManager {
         if (!hasNotificationPermission(context)) return false
         val user = FirebaseAuth.getInstance().currentUser ?: return false
         val token = getFcmToken() ?: return false
-        upsertTokenDoc(token, mapOf("enable_notifications" to true))
+        upsertTokenDoc(context, token, mapOf("enable_notifications" to true))
         return true
     }
 
-    suspend fun disable(): Boolean {
+    suspend fun disable(context: Context): Boolean {
         val token = getFcmToken() ?: return false
-        upsertTokenDoc(token, mapOf("enable_notifications" to false))
+        upsertTokenDoc(context, token, mapOf("enable_notifications" to false))
         return true
     }
 
-    suspend fun updateUserInfo() {
+    suspend fun updateUserInfo(context: Context) {
         val token = getFcmToken() ?: return
-        upsertTokenDoc(token)
+        upsertTokenDoc(context, token)
     }
 
     suspend fun getTimeOptions(): List<String> {
@@ -92,9 +92,9 @@ object NotificationsManager {
         }
     }
 
-    suspend fun setTime(time: String) {
+    suspend fun setTime(context: Context, time: String) {
         val token = getFcmToken() ?: return
-        upsertTokenDoc(token, mapOf("daily_update_time" to time))
+        upsertTokenDoc(context, token, mapOf("daily_update_time" to time))
     }
 
     private suspend fun getTokenDoc(token: String): Map<String, Any?>? {
@@ -110,9 +110,12 @@ object NotificationsManager {
         }
     }
 
-    private suspend fun upsertTokenDoc(token: String, extra: Map<String, Any> = emptyMap()) {
+    private suspend fun upsertTokenDoc(context: Context, token: String, extra: Map<String, Any> = emptyMap()) {
         val user = FirebaseAuth.getInstance().currentUser ?: return
         val locale = Locale.getDefault()
+        val versionName = try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+        } catch (_: Exception) { "" }
 
         val body = hashMapOf<String, Any>(
             "user_id" to user.uid,
@@ -121,6 +124,7 @@ object NotificationsManager {
             "country" to (locale.country ?: ""),
             "timezone" to (TimeZone.getDefault().rawOffset / 3600000),
             "platform" to "android",
+            "app_version" to versionName,
         )
         body.putAll(extra)
 
