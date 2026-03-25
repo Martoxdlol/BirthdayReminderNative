@@ -52,6 +52,11 @@ android {
             useLegacyPackaging = false
         }
     }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
