@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import net.tomascichero.birthdayremainder.Analytics
 import net.tomascichero.birthdayremainder.R
 import java.time.LocalDate
 import java.time.YearMonth
@@ -126,11 +127,12 @@ fun AddScreen(
                 "noYear" to noYear,
                 "notes" to notes,
                 "owner" to uid,
-                "app_version" to "3.0.0",
+                "app_version" to "3.0.2",
                 "created_at" to com.google.firebase.Timestamp.now(),
                 "updated_at" to com.google.firebase.Timestamp.now(),
             )
         )
+        Analytics.birthdayAdded(hasYear = !noYear)
         resetForm()
         onBirthdaySaved(savedBirthday)
     }

@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import net.tomascichero.birthdayremainder.data.ShareUtils
+import net.tomascichero.birthdayremainder.Analytics
 import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.ui.add.DayDropdown
@@ -98,6 +99,7 @@ fun BirthdayDetailSheet(
                                 .collection("birthdays")
                                 .document(birthday.id)
                                 .delete()
+                            Analytics.birthdayDeleted()
                         }
                         showDeleteConfirm = false
                         onDismiss()
@@ -158,6 +160,7 @@ private fun DetailContent(
                     putExtra(Intent.EXTRA_TEXT, url)
                 }
                 context.startActivity(Intent.createChooser(intent, shareLabel))
+                Analytics.birthdayShared()
             }) {
                 Icon(Icons.Default.Share, contentDescription = shareLabel)
             }
@@ -280,10 +283,11 @@ private fun EditContent(
                 "noYear" to noYear,
                 "notes" to notes,
                 "owner" to uid,
-                "app_version" to "3.0.0",
+                "app_version" to "3.0.2",
                 "updated_at" to com.google.firebase.Timestamp.now(),
             )
         )
+        Analytics.birthdayEdited()
         onSaved()
     }
 

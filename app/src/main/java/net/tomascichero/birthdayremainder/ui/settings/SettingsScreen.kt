@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import net.tomascichero.birthdayremainder.Analytics
 import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.notifications.NotificationsManager
 import net.tomascichero.birthdayremainder.preferences.AppPreferences
@@ -139,7 +140,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             icon = Icons.AutoMirrored.Filled.ExitToApp,
             title = stringResource(R.string.sign_out),
             position = GroupPosition.Middle,
-            onClick = { FirebaseAuth.getInstance().signOut() }
+            onClick = {
+                Analytics.signOut()
+                FirebaseAuth.getInstance().signOut()
+            }
         )
 
         val email = user?.email ?: "<please put here your email>"
@@ -178,10 +182,12 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                         } else {
                             NotificationsManager.enable(context)
                             notificationsEnabled = true
+                            Analytics.notificationsEnabled()
                         }
                     } else {
                         NotificationsManager.disable(context)
                         notificationsEnabled = false
+                        Analytics.notificationsDisabled()
                     }
                 }
             }
@@ -236,6 +242,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     putExtra(Intent.EXTRA_TEXT, "https://birthday-remainder-app.web.app/")
                 }
                 context.startActivity(Intent.createChooser(intent, shareLabel))
+                Analytics.shareAppClicked()
             }
         )
         SettingsItem(
@@ -285,6 +292,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                 selectedTime = time
                 showTimePicker = false
                 scope.launch { NotificationsManager.setTime(context, time) }
+                Analytics.notificationTimeChanged(time)
             },
             onDismiss = { showTimePicker = false }
         )
@@ -302,6 +310,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             onSelected = { index ->
                 val mode = ThemeMode.entries[index]
                 AppPreferences.setTheme(context, mode)
+                Analytics.themeChanged(mode.name)
                 showThemePicker = false
             },
             onDismiss = { showThemePicker = false }
@@ -316,6 +325,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             onSelected = { index ->
                 val lang = AppPreferences.availableLanguages[index]
                 AppPreferences.setLanguage(context, lang.code)
+                Analytics.languageChanged(lang.code)
                 showLanguagePicker = false
             },
             onDismiss = { showLanguagePicker = false }

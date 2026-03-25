@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import net.tomascichero.birthdayremainder.Analytics
 import net.tomascichero.birthdayremainder.R
 
 @Composable
@@ -120,6 +121,7 @@ private suspend fun signInWithGoogle(context: Context): Boolean {
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
             val firebaseCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
             FirebaseAuth.getInstance().signInWithCredential(firebaseCredential).await()
+            Analytics.signIn()
             true
         } else {
             Log.w("LoginScreen", "Credential is not of type Google ID!")

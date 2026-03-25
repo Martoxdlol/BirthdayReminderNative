@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.config)
+    implementation(libs.firebase.analytics)
 
     // Credential Manager (for Google Sign-In)
     implementation(libs.credentials)

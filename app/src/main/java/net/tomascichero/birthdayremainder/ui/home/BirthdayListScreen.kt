@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import net.tomascichero.birthdayremainder.Analytics
 import net.tomascichero.birthdayremainder.R
 import net.tomascichero.birthdayremainder.data.Birthday
 import net.tomascichero.birthdayremainder.data.BirthdayRepository
@@ -148,6 +149,7 @@ fun BirthdayListScreen(
                         putExtra(Intent.EXTRA_TEXT, url)
                     }
                     context.startActivity(Intent.createChooser(intent, shareLabel))
+                    Analytics.birthdayShared(selected.size)
                     selectionMode = false
                     selectedIds = emptySet()
                 },
