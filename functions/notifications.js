@@ -143,7 +143,8 @@ async function getConfig() {
     const template = await getRemoteConfig().getTemplate();
 
     const updateTimes = JSON.parse(template.parameters["daily_update_time"].defaultValue.value);
-    const defaultTime = template.parameters["default_daily_update_time"].defaultValue.value;
+    let defaultTime = template.parameters["default_daily_update_time"].defaultValue.value;
+    if (defaultTime.split(":").length === 2) defaultTime += ":00";
 
     return { updateTimes, defaultTime };
 }
@@ -232,10 +233,6 @@ function formatLabel(option) {
     const hourStr = option.hour.toString().padStart(2, "0");
     const minuteStr = option.minute.toString().padStart(2, "0");
     const secondStr = option.second.toString().padStart(2, "0");
-
-    if (secondStr === "00") {
-        return `${hourStr}:${minuteStr}`;
-    }
 
     return `${hourStr}:${minuteStr}:${secondStr}`;
 }
